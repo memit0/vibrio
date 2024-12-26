@@ -26,6 +26,8 @@ function Login() {
       
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
+        localStorage.setItem('userRole', response.data.role);
+        console.log('Stored role:', response.data.role); // Debug log
         navigate('/dashboard');
       } else {
         setError('No token received from server');

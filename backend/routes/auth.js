@@ -15,7 +15,7 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'Invalid role selected' });
     }
 
-    // Check if user exists
+    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
@@ -34,10 +34,14 @@ router.post('/register', async (req, res) => {
     });
 
     await user.save();
-    res.status(201).json({ message: 'User created successfully' });
+    
+    // Log successful registration
+    console.log('User registered successfully:', { name, email, role });
+
+    res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
     console.error('Registration error:', error);
-    res.status(500).json({ message: 'Error registering user' });
+    res.status(500).json({ message: 'Error registering user', error: error.message });
   }
 });
 
@@ -46,13 +50,13 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Check if user exists
+    // Find user
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: 'User not found' });
     }
 
-    // Check password
+    // Validate password
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
       return res.status(400).json({ message: 'Invalid password' });
@@ -65,15 +69,19 @@ router.post('/login', async (req, res) => {
       { expiresIn: '24h' }
     );
 
-    // Send response with token
+    // Log the role being sent
+    console.log('Sending role:', user.role);
+
+    // Send response with token and role
     res.json({
       token,
+      role: user.role,
       userId: user._id,
       message: 'Login successful'
     });
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: error.message });
   }
 });
 

@@ -1,28 +1,31 @@
 const router = require('express').Router();
 const Campaign = require('../models/Campaign');
+const User = require('../models/User');
 const auth = require('../middleware/auth');
 
 // Create a new campaign
 router.post('/', auth, async (req, res) => {
   try {
     const { name, description, budget, startDate, endDate, status } = req.body;
-
-    // Validate dates
-    const start = new Date(startDate);
-    const end = new Date(endDate);
     
-    if (end <= start) {
-      return res.status(400).json({ message: 'End date must be after start date' });
+    // Get user information
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
 
     const campaign = new Campaign({
       name,
       description,
       budget: parseFloat(budget),
-      startDate: start,
-      endDate: end,
+      startDate,
+      endDate,
       status,
-      userId: req.userId // From auth middleware
+      createdBy: {
+        userId: user._id,
+        name: user.name,
+        role: user.role
+      }
     });
 
     const savedCampaign = await campaign.save();
@@ -33,10 +36,10 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// Get all campaigns for a user
+// Get all campaigns
 router.get('/', auth, async (req, res) => {
   try {
-    const campaigns = await Campaign.find({ userId: req.userId })
+    const campaigns = await Campaign.find()
       .sort({ createdAt: -1 });
     res.json(campaigns);
   } catch (error) {

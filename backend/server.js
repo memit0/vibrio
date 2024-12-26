@@ -18,7 +18,16 @@ app.use('/api/campaigns', campaignRoutes);
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('MongoDB connected successfully'))
+  .then(async () => {
+    console.log('MongoDB connected successfully');
+    // Drop the problematic index
+    try {
+      await mongoose.connection.collection('users').dropIndex('username_1');
+      console.log('Successfully dropped username index');
+    } catch (error) {
+      console.log('No username index to drop or already dropped');
+    }
+  })
   .catch(err => console.error('MongoDB connection error:', err));
 
 // Error handling middleware

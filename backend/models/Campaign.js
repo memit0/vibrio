@@ -28,10 +28,20 @@ const campaignSchema = new mongoose.Schema({
     enum: ['draft', 'active', 'paused', 'completed'],
     default: 'draft'
   },
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+  createdBy: {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
+    name: {
+      type: String,
+      required: true
+    },
+    role: {
+      type: String,
+      required: true
+    }
   }
 }, { timestamps: true });
 

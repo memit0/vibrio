@@ -9,13 +9,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Import routes
+// Routes
 const authRoutes = require('./routes/auth');
-const productRoutes = require('./routes/products');
+const campaignRoutes = require('./routes/campaigns');
 
-// Use routes
 app.use('/api/auth', authRoutes);
-app.use('/api/products', productRoutes);
+app.use('/api/campaigns', campaignRoutes);
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)

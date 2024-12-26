@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Register from './components/Register';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
-import AddProduct from './components/AddProduct';
+import CreateCampaign from './components/CreateCampaign';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -21,10 +21,10 @@ function App() {
           } 
         />
         <Route 
-          path="/add-product" 
+          path="/create-campaign" 
           element={
             <ProtectedRoute>
-              <AddProduct />
+              <CreateCampaign />
             </ProtectedRoute>
           } 
         />

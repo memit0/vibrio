@@ -9,6 +9,7 @@ function Dashboard() {
   const [campaigns, setCampaigns] = useState([]);
   const [error, setError] = useState('');
   const [userRole, setUserRole] = useState('');
+  const [affiliateLinks, setAffiliateLinks] = useState({});
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -71,6 +72,27 @@ function Dashboard() {
     return `status-badge ${statusClasses[status] || ''}`;
   };
 
+  const generateAffiliateLink = async (campaignId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(
+        `http://localhost:5001/api/campaigns/${campaignId}/affiliate-link`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+      
+      setAffiliateLinks(prev => ({
+        ...prev,
+        [campaignId]: response.data.affiliateLink
+      }));
+    } catch (error) {
+      console.error('Error generating affiliate link:', error);
+      setError('Failed to generate affiliate link');
+    }
+  };
+
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
@@ -115,6 +137,39 @@ function Dashboard() {
                 <p><strong>Start Date:</strong> {formatDate(campaign.startDate)}</p>
                 <p><strong>End Date:</strong> {formatDate(campaign.endDate)}</p>
               </div>
+              {userRole === 'influencer' && (
+                <div className="affiliate-section">
+                  {affiliateLinks[campaign._id] ? (
+                    <div className="affiliate-link">
+                      <p><strong>Your Affiliate Link:</strong></p>
+                      <div className="link-container">
+                        <input 
+                          type="text" 
+                          value={affiliateLinks[campaign._id]} 
+                          readOnly 
+                          className="affiliate-link-input"
+                        />
+                        <button 
+                          onClick={() => {
+                            navigator.clipboard.writeText(affiliateLinks[campaign._id]);
+                            // Optional: Add some visual feedback for copy success
+                          }}
+                          className="copy-button"
+                        >
+                          Copy
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button 
+                      onClick={() => generateAffiliateLink(campaign._id)}
+                      className="generate-link-button"
+                    >
+                      Generate Affiliate Link
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>

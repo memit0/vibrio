@@ -1,3 +1,16 @@
+**Developing**
+Before developing, please read the following:
+
+- make sure to create a monogdb database using mongodb atlas and add the uri to the .env file
+- populate the .env file with the correct values
+- create a new branch for each feature
+  - to create a new branch, use the following command: git checkout -b feature/new-feature
+- make sure to commit your changes before creating a pull request
+- make sure to push your changes before creating a pull request
+- make sure to create a pull request before merging your changes
+- make sure to constantly pull the latest changes from the main branch before starting to work on a new feature
+- Never push to the main branch!!
+
 I am building a platform called Vibrio, which connects small businesses with influencers through a reward-based bounty system. Help me implement this project step by step. The platform includes the following features:
 
 1. **Authentication System**:

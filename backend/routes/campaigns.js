@@ -113,4 +113,32 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
+// Generate affiliate link for a campaign
+router.post('/:campaignId/affiliate-link', auth, async (req, res) => {
+  try {
+    // Check if user is an influencer
+    const user = await User.findById(req.userId);
+    if (!user || user.role !== 'influencer') {
+      return res.status(403).json({ message: 'Only influencers can generate affiliate links' });
+    }
+
+    const campaign = await Campaign.findById(req.params.campaignId);
+    if (!campaign) {
+      return res.status(404).json({ message: 'Campaign not found' });
+    }
+
+    // Generate a unique affiliate link
+    const uniqueCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const affiliateLink = `http://ourdomain.com/ref/${uniqueCode}`;
+
+    // Here you might want to store the affiliate link in your database
+    // For now, we're just returning it
+    
+    res.json({ affiliateLink });
+  } catch (error) {
+    console.error('Error generating affiliate link:', error);
+    res.status(500).json({ message: 'Error generating affiliate link' });
+  }
+});
+
 module.exports = router; 

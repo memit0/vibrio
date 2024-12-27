@@ -161,4 +161,60 @@
   .campaigns-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.affiliate-section {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.generate-link-button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.generate-link-button:hover {
+  background-color: #218838;
+}
+
+.affiliate-link {
+  margin-top: 0.5rem;
+}
+
+.link-container {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.affiliate-link-input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  background-color: #f8f9fa;
+}
+
+.copy-button {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.copy-button:hover {
+  background-color: #5a6268;
 } 

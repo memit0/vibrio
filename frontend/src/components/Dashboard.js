@@ -3,19 +3,25 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { canCreateCampaign } from '../utils/roleCheck';
 import '../styles/Dashboard.css';
+import React from 'react';
 
 function Dashboard() {
   const navigate = useNavigate();
   const [campaigns, setCampaigns] = useState([]);
+  const [filteredCampaigns, setFilteredCampaigns] = useState([]);
   const [error, setError] = useState('');
   const [userRole, setUserRole] = useState('');
-  const [affiliateLinks, setAffiliateLinks] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [filters, setFilters] = useState({
+    owner: '',
+    status: '',
+    showMyCampaigns: false
+  });
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     const storedRole = localStorage.getItem('userRole');
-    console.log('Retrieved role from storage:', storedRole);
-
+    
     if (!token) {
       navigate('/login');
     } else {
@@ -24,33 +30,81 @@ function Dashboard() {
     }
   }, [navigate]);
 
-  const fetchUserRole = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5001/api/auth/me', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setUserRole(response.data.role);
-    } catch (error) {
-      console.error('Error fetching user role:', error);
+  useEffect(() => {
+    filterCampaigns();
+  }, [campaigns, filters]);
+
+  const filterCampaigns = () => {
+    let filtered = [...campaigns];
+
+    // Filter by owner name
+    if (filters.owner) {
+      filtered = filtered.filter(campaign => 
+        campaign.createdBy?.name.toLowerCase().includes(filters.owner.toLowerCase())
+      );
     }
+
+    // Filter by status
+    if (filters.status) {
+      filtered = filtered.filter(campaign => {
+        const campaignDate = new Date(campaign.startDate);
+        const today = new Date();
+        
+        switch (filters.status) {
+          case 'active':
+            return campaign.status === 'active';
+          case 'upcoming':
+            return campaignDate > today;
+          case 'completed':
+            return campaign.status === 'completed';
+          default:
+            return true;
+        }
+      });
+    }
+
+    // Filter my campaigns
+    if (filters.showMyCampaigns) {
+      const userId = localStorage.getItem('userId');
+      filtered = filtered.filter(campaign => campaign.createdBy?._id === userId);
+    }
+
+    setFilteredCampaigns(filtered);
+  };
+
+  const handleFilterChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFilters(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
   };
 
   const fetchCampaigns = async () => {
     try {
+      setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5001/api/campaigns', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      
+      const response = await axios.get(
+        'http://localhost:5001/api/campaigns',
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
       setCampaigns(response.data);
+      setFilteredCampaigns(response.data);
     } catch (error) {
       console.error('Error fetching campaigns:', error);
       setError('Failed to load campaigns');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('userId');
     navigate('/login');
   };
 
@@ -72,27 +126,6 @@ function Dashboard() {
     return `status-badge ${statusClasses[status] || ''}`;
   };
 
-  const generateAffiliateLink = async (campaignId) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.post(
-        `http://localhost:5001/api/campaigns/${campaignId}/affiliate-link`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
-      
-      setAffiliateLinks(prev => ({
-        ...prev,
-        [campaignId]: response.data.affiliateLink
-      }));
-    } catch (error) {
-      console.error('Error generating affiliate link:', error);
-      setError('Failed to generate affiliate link');
-    }
-  };
-
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
@@ -108,12 +141,40 @@ function Dashboard() {
           </button>
         </div>
       </div>
+
+      <div className="filter-controls">
+        <select
+          name="status"
+          value={filters.status}
+          onChange={handleFilterChange}
+          className="filter-select"
+        >
+          <option value="">All Statuses</option>
+          <option value="active">Active</option>
+          <option value="upcoming">Upcoming</option>
+          <option value="completed">Completed</option>
+        </select>
+
+
+        {userRole === 'business_owner' && (
+          <label className="my-campaigns-filter">
+            <input
+              type="checkbox"
+              name="showMyCampaigns"
+              checked={filters.showMyCampaigns}
+              onChange={handleFilterChange}
+            />
+            <span>My Campaigns Only</span>
+          </label>
+        )}
+      </div>
       
       {error && <div className="error-message">{error}</div>}
+      {loading && <div className="loading">Loading...</div>}
       
       <div className="dashboard-content">
         <div className="campaigns-grid">
-          {campaigns.map((campaign) => (
+          {filteredCampaigns.map((campaign) => (
             <div key={campaign._id} className="campaign-card">
               <div className="campaign-header">
                 <h3>{campaign.name}</h3>
@@ -137,39 +198,6 @@ function Dashboard() {
                 <p><strong>Start Date:</strong> {formatDate(campaign.startDate)}</p>
                 <p><strong>End Date:</strong> {formatDate(campaign.endDate)}</p>
               </div>
-              {userRole === 'influencer' && (
-                <div className="affiliate-section">
-                  {affiliateLinks[campaign._id] ? (
-                    <div className="affiliate-link">
-                      <p><strong>Your Affiliate Link:</strong></p>
-                      <div className="link-container">
-                        <input 
-                          type="text" 
-                          value={affiliateLinks[campaign._id]} 
-                          readOnly 
-                          className="affiliate-link-input"
-                        />
-                        <button 
-                          onClick={() => {
-                            navigator.clipboard.writeText(affiliateLinks[campaign._id]);
-                            // Optional: Add some visual feedback for copy success
-                          }}
-                          className="copy-button"
-                        >
-                          Copy
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <button 
-                      onClick={() => generateAffiliateLink(campaign._id)}
-                      className="generate-link-button"
-                    >
-                      Generate Affiliate Link
-                    </button>
-                  )}
-                </div>
-              )}
             </div>
           ))}
         </div>

@@ -170,52 +170,60 @@
 }
 
 .generate-link-button {
-  background-color: #28a745;
+  background-color: #4CAF50;
   color: white;
+  padding: 8px 16px;
   border: none;
-  padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
-  width: 100%;
-  font-size: 0.9rem;
-  transition: background-color 0.2s;
+  font-size: 14px;
+  transition: background-color 0.3s;
 }
 
 .generate-link-button:hover {
-  background-color: #218838;
+  background-color: #45a049;
 }
 
-.affiliate-link {
-  margin-top: 0.5rem;
+.generate-link-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
 }
 
-.link-container {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-
-.affiliate-link-input {
-  flex: 1;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 0.9rem;
+.tracking-link {
+  margin-top: 1rem;
+  padding: 1rem;
   background-color: #f8f9fa;
+  border-radius: 4px;
 }
 
-.copy-button {
+.tracking-link p {
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+  color: #666;
+}
+
+.tracking-link a {
+  color: #007bff;
+  word-break: break-all;
+  text-decoration: none;
+}
+
+.tracking-link a:hover {
+  text-decoration: underline;
+}
+
+.copy-link-button {
+  margin-top: 0.5rem;
   background-color: #6c757d;
   color: white;
+  padding: 4px 8px;
   border: none;
-  padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.2s;
+  font-size: 12px;
 }
 
-.copy-button:hover {
+.copy-link-button:hover {
   background-color: #5a6268;
 }
 
@@ -283,4 +291,118 @@
   outline: none;
   border-color: #80bdff;
   box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+}
+
+.campaign-actions {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.generate-link-button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.generate-link-button:hover {
+  background-color: #45a049;
+}
+
+.generate-link-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.tracking-link {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+.tracking-link p {
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+  color: #666;
+}
+
+.tracking-link a {
+  color: #007bff;
+  word-break: break-all;
+  text-decoration: none;
+}
+
+.tracking-link a:hover {
+  text-decoration: underline;
+}
+
+.copy-link-button {
+  margin-top: 0.5rem;
+  background-color: #6c757d;
+  color: white;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.copy-link-button:hover {
+  background-color: #5a6268;
+}
+
+.link-container {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.link-input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #fff;
+  color: #333;
+  cursor: text;
+}
+
+.copy-button {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.copy-button:hover {
+  background-color: #0056b3;
+}
+
+.copy-button:active {
+  background-color: #004494;
+}
+
+.tracking-link {
+  margin-top: 16px;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.tracking-link p {
+  margin: 0 0 8px 0;
+  font-weight: 600;
+  color: #495057;
 }

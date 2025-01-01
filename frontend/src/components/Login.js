@@ -21,19 +21,17 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5001/api/auth/login', formData);
-      console.log('Login response:', response.data); // Debug log
-      
-      if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('userRole', response.data.role);
-        console.log('Stored role:', response.data.role); // Debug log
-        navigate('/dashboard');
-      } else {
-        setError('No token received from server');
-      }
+      const response = await axios.post('http://localhost:5001/api/auth/login', {
+        email: formData.email,
+        password: formData.password
+      });
+
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('userRole', response.data.role);
+      localStorage.setItem('username', response.data.name);
+
+      navigate('/dashboard');
     } catch (error) {
-      console.error('Login error:', error);
       setError(error.response?.data?.message || 'Login failed');
     }
   };

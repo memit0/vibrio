@@ -42,7 +42,26 @@ const campaignSchema = new mongoose.Schema({
       type: String,
       required: true
     }
-  }
+  },
+  targetUrl: {
+    type: String,
+    required: true
+  },
+  trackingLinks: [{
+    shortLink: String,
+    influencerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    },
+    clicks: {
+      type: Number,
+      default: 0
+    }
+  }]
 }, { timestamps: true });
 
 // Validate that endDate is after startDate

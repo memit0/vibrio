@@ -11,7 +11,8 @@ function CreateCampaign() {
     budget: '',
     startDate: '',
     endDate: '',
-    status: 'draft' // default status
+    status: 'draft', // default status
+    targetUrl: '' // Add this field
   });
   const [error, setError] = useState('');
   const [touched, setTouched] = useState({});
@@ -107,18 +108,29 @@ function CreateCampaign() {
       return;
     }
 
+    // Log the form data being sent
+    console.log('Submitting campaign data:', formData);
+
     try {
-      const token = localStorage.getItem('token');
-      await axios.post('http://localhost:5001/api/campaigns', formData, {
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+      const response = await axios.post(
+        'http://localhost:5001/api/campaigns',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
         }
-      });
+      );
+
+      // Log the response
+      console.log('Campaign created successfully:', response.data);
+      
       navigate('/dashboard');
-    } catch (err) {
+    } catch (error) {
+      console.error('Error creating campaign:', error.response?.data || error);
       setError({
-        submit: err.response?.data?.message || 'Error creating campaign'
+        submit: error.response?.data?.message || 'Error creating campaign'
       });
     }
   };
@@ -227,6 +239,20 @@ function CreateCampaign() {
                 </option>
               ))}
             </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="targetUrl">Target URL</label>
+            <input
+              type="url"
+              className="form-control"
+              id="targetUrl"
+              name="targetUrl"
+              value={formData.targetUrl}
+              onChange={handleChange}
+              required
+              placeholder="https://example.com"
+            />
           </div>
 
           <div className="button-group">
